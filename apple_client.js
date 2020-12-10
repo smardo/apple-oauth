@@ -87,7 +87,7 @@ Apple.requestCredential = function(options, nativeCallback, oauthCallback) {
         },
         function(err) {
             console.error("err", err);
-            callback(err, null);
+            credentialRequestCompleteCallback(err);
         }
     );
 };
