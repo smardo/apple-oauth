@@ -2,6 +2,7 @@
 import { Promise } from "meteor/promise";
 import Apple from "./namespace.js";
 import { Accounts } from "meteor/accounts-base";
+import { getClientIdFromOptions } from "./utils";
 
 const jwt = require("jsonwebtoken");
 const jwksClient = require("jwks-rsa");
@@ -18,13 +19,16 @@ Apple.jwksClient = jwksClient({
 /**
  * Verifies and parses identity token.
  *
+ * @param query
  * @param {string} idToken Token to parse
+ * @param isNative
  */
-const verifyAndParseIdentityToken = (idToken, isNative = false) =>
+const verifyAndParseIdentityToken = (query, idToken, isNative = false) =>
   new Promise((resolve, reject) => {
     const decoded = jwt.decode(idToken, { complete: true });
     const { kid, alg } = decoded.header;
-    const clientId = isNative ? Apple.config.nativeClientId : Apple.config.clientId;
+    const state = OAuth._stateFromQuery(query) || {};
+    const clientId = isNative ? Apple.config.nativeClientId : getClientIdFromOptions(state,Apple.config);
 
     Apple.jwksClient.getSigningKey(kid, (err, key) => {
       if (err) {
@@ -55,16 +59,18 @@ const verifyAndParseIdentityToken = (idToken, isNative = false) =>
 /**
  * Extracts data from apples tokens and formats for accounts
  *
+ * @param query
  * @param {*} tokens tokens and data from apple
+ * @param isNative
  */
-const getServiceDataFromTokens = (tokens, isNative = false) => {
+const getServiceDataFromTokens = (query, tokens, isNative = false) => {
   const { accessToken, idToken, expiresIn } = tokens;
   const scopes = "name email";
 
   let parsedIdToken;
 
   try {
-    parsedIdToken = Promise.await(verifyAndParseIdentityToken(idToken, isNative));
+    parsedIdToken = Promise.await(verifyAndParseIdentityToken(query, idToken, isNative));
   } catch (error) {
     throw new Error(`Apple Id token verification failed. ${error}`);
   }
@@ -146,8 +152,8 @@ function getAbsoluteUrlOptions(query) {
     return undefined;
   }
   try {
+    console.log("stateFromQuery", query);
     const state = OAuth._stateFromQuery(query) || {};
-    console.log(`state`, state);
 
     const redirectUrl = state.redirectUrl;
     return {
@@ -174,7 +180,8 @@ const getTokens = (query, isNative = false) => {
   if (!Apple.config) {
     throw new ServiceConfiguration.ConfigError("Apple");
   }
-  const clientId = isNative ? Apple.config.nativeClientId : Apple.config.clientId;
+  const state = OAuth._stateFromQuery(query) || {};
+  const clientId = isNative ? Apple.config.nativeClientId : getClientIdFromOptions(state,Apple.config);
   const token = generateToken(
     Apple.config.teamId,
     clientId,
@@ -241,11 +248,11 @@ const getTokens = (query, isNative = false) => {
   }
 };
 
-const getServiceData = (query) => getServiceDataFromTokens(getTokens(query, false), false);
+const getServiceData = (query) => getServiceDataFromTokens(query, getTokens(query, false), false);
 OAuth.registerService("apple", 2, null, getServiceData);
 Accounts.registerLoginHandler((query) => {
   if (query.methodName != "native-apple") {
     return;
   }
-  return getServiceDataFromTokens(getTokens(query, true), true);
+  return getServiceDataFromTokens(query, getTokens(query, true), true);
 });

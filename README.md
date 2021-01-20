@@ -47,6 +47,41 @@ And log in calling:
   });
 ```
 
+## Use multiple services ids
+
+Because of a limitation imposed by apple, organization accounts can set up to 100 domains+redirect urls, and individuals only 10.
+
+This is a bummer if you have a whitelabel app. With this lib you can use multiple services ids, like the following:
+
+- Create a new service id on apple developers and set it on your settings.json file:
+
+```
+"apple": {
+  "nativeClientId": "< your app id (mobile) >",
+  "clientId": "< your service id (for web) >",
+  "clientId-2": "< your service id (for web) >",
+  "clientId-3": "< your service id (for web) >",
+  "clientId-4": "< your service id (for web) >",
+  "clientId-5": "< your service id (for web) >",
+  "teamId": "",
+  "keyId": "",
+  "secret": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----",
+  "redirectUri": "https://abc.def/_oauth/apple"
+},
+```
+They need to be set at the same nativeClientId, otherwise the secret and keyIds would be different. We don't support multiple native ids yet.
+
+- Login with:
+```
+  Meteor.loginWithApple({
+    requestPermissions: ['name', 'email'],
+    shard: "2"
+  });
+```
+This will use the clientId-2 id, and so on.
+
+
+
 ## FAQ
 
 1. My native app doesn't log in: Check if you built your app with the "Sign in with Apple" capability enabled, and if the provisioning profile also supports it.
