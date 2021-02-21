@@ -52,7 +52,7 @@ Apple.requestCredential = function (options, oauthCallback, nativeCallback) {
             `&redirect_uri=${redirectUriWithOauth}` +
             `&client_id=${getClientIdFromOptions(options, config)}` +
             `&scope=${scope}` +
-            `&state=${stateParam({loginStyle, credentialToken, redirectUrl: options && options.redirectUrl, shard: options.shard || ""})}`;
+            `&state=${stateParam({loginStyle, credentialToken, redirectUrl: options && options.redirectUrl, shard: options.shard})}`;
 
         OAuth.launchLogin({
             loginService: "apple",
