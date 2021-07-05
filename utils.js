@@ -8,6 +8,20 @@ export function getClientIdFromOptions(options, servicesConfig) {
   return servicesConfig.clientId;
 }
 
+export function getAppIdFromOptions(options) {
+  const { appId } = options;
+  return appId || null;
+}
+
+export function getServiceConfiguration(appId = null) {
+  const service = ServiceConfiguration.configurations.findOne({
+    service: "apple",
+  });
+  const serviceConfiguration = service[appId] || service;
+  serviceConfiguration.secret = typeof service.secret === 'string' ? service.secret : service.secret[appId || 'default'];
+  return service[appId] || service;
+}
+
 export function stateParam({
   loginStyle,
   credentialToken,

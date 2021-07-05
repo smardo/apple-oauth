@@ -2,7 +2,7 @@
 import { Promise } from 'meteor/promise';
 import Apple from './namespace.js';
 import { Accounts } from 'meteor/accounts-base';
-import { getClientIdFromOptions } from './utils';
+import { getAppIdFromOptions, getClientIdFromOptions, getServiceConfiguration } from './utils';
 
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
@@ -184,16 +184,16 @@ function getAbsoluteUrlOptions(query) {
  */
 const getTokens = (query, isNative = false) => {
   const endpoint = 'https://appleid.apple.com/auth/token';
-  Apple.config = ServiceConfiguration.configurations.findOne({
-    service: 'apple',
-  });
-  if (!Apple.config) {
-    throw new ServiceConfiguration.ConfigError('Apple');
-  }
   let state = {};
   try {
     state = OAuth._stateFromQuery(query) || {};
   } catch (e) {}
+
+  const appId = getAppIdFromOptions(state)
+  Apple.config = getServiceConfiguration({ appId });
+  if (!Apple.config) {
+    throw new ServiceConfiguration.ConfigError('Apple');
+  }
   const clientId = isNative
     ? Apple.config.nativeClientId
     : getClientIdFromOptions(state, Apple.config);

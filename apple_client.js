@@ -2,7 +2,7 @@
 import Apple from "./namespace.js";
 import { Accounts } from "meteor/accounts-base";
 import semver from "semver-lite";
-import { getClientIdFromOptions, stateParam } from "./utils";
+import { getAppIdFromOptions, getClientIdFromOptions, getServiceConfiguration, stateParam } from "./utils";
 
 /**
  * Request Apple credentials for the user (boilerplate).
@@ -24,9 +24,9 @@ Apple.requestCredential = function (options, oauthCallback, nativeCallback) {
     } else if (!options) {
         options = {};
     }
-    const config = ServiceConfiguration.configurations.findOne({
-        service: "apple",
-    });
+    const appId = getAppIdFromOptions(options)
+    const config = getServiceConfiguration({ appId });
+
     if (!config) {
         credentialRequestCompleteCallback &&
         credentialRequestCompleteCallback(new ServiceConfiguration.ConfigError());

@@ -80,6 +80,41 @@ They need to be set at the same nativeClientId, otherwise the secret and keyIds 
 ```
 This will use the clientId-2 id, and so on.
 
+## Use multiple native client ids
+
+The use case for this feature is a whitelabel server, serving oauth credentials for multiple native apps. In this case, we need to have one service configuration per native app id.
+
+"apple": {
+    "nativeClientId": "< your app id (mobile) >",
+    "clientId": "< your service id (for web) >",
+    "teamId": "",
+    "keyId": "",
+    "secret": : { 
+        "default": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----",
+        "br.com.anotherAppId": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"
+        "br.com.anotherAppId2": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"
+    },
+    "redirectUri": "https://abc.def/_oauth/apple"
+    "br.com.anotherAppId" : {
+        "nativeClientId": "< your app id (mobile) >",
+        "clientId": "< your service id (for web) >",
+        "clientId-2": "< your service id (for web) >",
+        "teamId": "",
+        "keyId": "",
+        "redirectUri": "https://abc.def/_oauth/apple"
+    }
+    "br.com.anotherAppId2" : {
+        "nativeClientId": "< your app id (mobile) >",
+        "clientId": "< your service id (for web) >",
+        "clientId-2": "< your service id (for web) >",
+        "teamId": "",
+        "keyId": "",
+        "redirectUri": "https://abc.def/_oauth/apple"
+    }
+},
+
+
+
 
 
 ## FAQ
