@@ -85,32 +85,30 @@ This will use the clientId-2 id, and so on.
 The use case for this feature is a whitelabel server, serving oauth credentials for multiple native apps. In this case, we need to have one service configuration per native app id.
 
 "apple": {
-    "nativeClientId": "< your app id (mobile) >",
-    "clientId": "< your service id (for web) >",
-    "teamId": "",
-    "keyId": "",
-    "secret": : { 
-        "default": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----",
-        "br.com.anotherAppId": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"
-        "br.com.anotherAppId2": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"
-    },
-    "redirectUri": "https://abc.def/_oauth/apple"
-    "br.com.anotherAppId" : {
-        "nativeClientId": "< your app id (mobile) >",
-        "clientId": "< your service id (for web) >",
-        "clientId-2": "< your service id (for web) >",
-        "teamId": "",
-        "keyId": "",
-        "redirectUri": "https://abc.def/_oauth/apple"
-    }
-    "br.com.anotherAppId2" : {
-        "nativeClientId": "< your app id (mobile) >",
-        "clientId": "< your service id (for web) >",
-        "clientId-2": "< your service id (for web) >",
-        "teamId": "",
-        "keyId": "",
-        "redirectUri": "https://abc.def/_oauth/apple"
-    }
+    "secret": : [ 
+        {"appId": "default", "secret" : "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"}
+        {"appId": "br.com.anotherAppId", "secret": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"}
+    ],
+    "apps": [
+        {
+            "appId": "br.com.anotherAppId",
+            "nativeClientId": "< your app id (mobile) >",
+            "clientId": "< your service id (for web) >",
+            "clientId-2": "< your service id (for web) >",
+            "teamId": "",
+            "keyId": "",
+            "redirectUri": "https://abc.def/_oauth/apple"
+        },
+        {
+            "appId": "br.com.anotherAppId2",
+            "nativeClientId": "< your app id (mobile) >",
+            "clientId": "< your service id (for web) >",
+            "clientId-2": "< your service id (for web) >",
+            "teamId": "",
+            "keyId": "",
+            "redirectUri": "https://abc.def/_oauth/apple"
+        }
+    ]
 },
 
 
