@@ -87,7 +87,7 @@ The use case for this feature is a whitelabel server, serving oauth credentials 
 ```json
 "apple": {
     "secret": : [ 
-        {"appId": "default", "secret" : "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"}
+        {"appId": "br.com.anotherAppId2", "secret" : "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"}
         {"appId": "br.com.anotherAppId", "secret": "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"}
     ],
     "apps": [
