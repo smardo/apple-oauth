@@ -84,6 +84,7 @@ This will use the clientId-2 id, and so on.
 
 The use case for this feature is a whitelabel server, serving oauth credentials for multiple native apps. In this case, we need to have one service configuration per native app id.
 
+```json
 "apple": {
     "secret": : [ 
         {"appId": "default", "secret" : "-----BEGIN PRIVATE KEY-----\nABC\nABC\nABC\nABC\n-----END PRIVATE KEY-----"}
@@ -109,8 +110,8 @@ The use case for this feature is a whitelabel server, serving oauth credentials 
             "redirectUri": "https://abc.def/_oauth/apple"
         }
     ]
-},
-
+}
+```
 
 
 
