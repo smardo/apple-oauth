@@ -68,7 +68,7 @@ const verifyAndParseIdentityToken = (query, idToken, isNative = false) =>
  * @param {*} tokens tokens and data from apple
  * @param isNative
  */
-const getServiceDataFromTokens = (query, tokens, isNative = false) => {
+Apple.getServiceDataFromTokens = (query, tokens, isNative = false) => {
   const { accessToken, idToken, expiresIn } = tokens;
   const scopes = 'name email';
 
@@ -96,6 +96,7 @@ const getServiceDataFromTokens = (query, tokens, isNative = false) => {
   if (tokens.refreshToken) {
     serviceData.refreshToken = tokens.refreshToken;
   }
+  
 
   const options = { profile: { email: serviceData.email } };
 
@@ -108,16 +109,20 @@ const getServiceDataFromTokens = (query, tokens, isNative = false) => {
     options.profile.name = tokens.user.name;
   }
 
-  return isNative
-    ? Accounts.updateOrCreateUserFromExternalService(
-        'apple',
-        serviceData,
-        options
-      )
-    : {
-        serviceData,
-        options,
-      };
+  return {
+    serviceData,
+    options,
+  };
+  // return isNative
+  //   ? Accounts.updateOrCreateUserFromExternalService(
+  //       'apple',
+  //       serviceData,
+  //       options
+  //     )
+  //   : {
+  //       serviceData,
+  //       options,
+  //     };
 };
 
 /**
@@ -182,7 +187,7 @@ function getAbsoluteUrlOptions(query) {
  *
  * @param {*} query auth/authorize redirect response from apple
  */
-const getTokens = (query, isNative = false) => {
+Apple.getTokens = (query, isNative = false) => {
   const endpoint = 'https://appleid.apple.com/auth/token';
   let state = {};
   try {
@@ -215,7 +220,7 @@ const getTokens = (query, isNative = false) => {
 
     response = HTTP.post(endpoint, {
       params: {
-        code: query.code,
+        code: query.authorizationCode,
         client_id: clientId,
         client_secret: token,
         grant_type: 'authorization_code',
@@ -254,23 +259,17 @@ const getTokens = (query, isNative = false) => {
       expiresIn: response.data.expires_in,
       idToken: response.data.id_token,
       user,
-      fullName: query.fullName
-        ? [
-            query.fullName.givenName,
-            query.fullName.middleName,
-            query.fullName.familyName,
-          ].join(' ')
-        : '',
+      fullName: query.givenName ? query.givenName : "" +  query.familyName ? query.familyName : "",
     };
   }
 };
 
 const getServiceData = query =>
-  getServiceDataFromTokens(query, getTokens(query, false), false);
+  Apple.getServiceDataFromTokens(query, Apple.getTokens(query, false), false);
 OAuth.registerService('apple', 2, null, getServiceData);
 Accounts.registerLoginHandler(query => {
   if (query.methodName != 'native-apple') {
     return;
   }
-  return getServiceDataFromTokens(query, getTokens(query, true), true);
+  return Apple.getServiceDataFromTokens(query, Apple.getTokens(query, true), true);
 });

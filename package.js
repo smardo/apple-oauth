@@ -1,5 +1,5 @@
 Package.describe({
-    name: 'quave:apple-oauth',
+    name: 'smardo:apple-oauth',
     version: '3.0.0',
     summary: 'Sign in with Apple OAuth flow - fork from bigowl',
     git: 'https://github.com/quavedev/apple-oauth',
