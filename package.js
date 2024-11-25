@@ -6,7 +6,8 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-    api.versionsFrom(['1.9', '2.3'])
+    api.versionsFrom(['1.9', '2.3', '2.16']);
+    
     api.use('ecmascript');
     api.use('base64');
     api.use('accounts-base', ['client', 'server']);
